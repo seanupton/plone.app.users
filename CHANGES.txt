@@ -1,6 +1,14 @@
 Changelog
 =========
 
+1.1.4-upiq (interim fork, backport)
+-----------------------------------
+
+- Added user timezone selection to user preferecnes and a dependency on
+  plone.app.event for vocabulary for user timezone selection.
+  [seanupton]
+
+
 1.1.4 (unreleased)
 ------------------
 

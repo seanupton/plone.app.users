@@ -79,6 +79,13 @@ class IPersonalPreferences(Interface):
         required=False
         )
 
+    timezone = Choice(
+        title=_(u'label_timezone', default=u'Time zone'),
+        description=_(u'help_timezone', default=u'Your time zone'),
+        vocabulary='plone.app.event.AvailableTimezones',
+        required=False,
+        )
+
 
 class PersonalPreferencesPanelAdapter(AccountPanelSchemaAdapter):
 
@@ -129,6 +136,24 @@ class PersonalPreferencesPanelAdapter(AccountPanelSchemaAdapter):
 
     language = property(get_language, set_language)
 
+    def get_timezone(self):
+        return self.context.getProperty('timezone', '')
+
+    def set_timezone(self, value):
+        if value is None:
+            value = ''
+        return self.context.setMemberProperties({'timezone': value})
+
+    timezone = property(get_timezone, set_timezone)
+
+
+def TimezoneWidget(field, request):
+    """ Timezone selection widget, vocabulary from plone.app.event"""
+    widget = DropdownWidget(field, field.vocabulary, request)
+    widget._messageNoValue = _(u'vocabulary-avilable-editor-novalue',
+                               u'Use site default')
+    return widget
+
 
 def LanguageWidget(field, request):
     """ Create selector with languages vocab """
@@ -160,6 +185,7 @@ class PersonalPreferencesPanel(AccountPanelForm):
     form_fields = form.FormFields(IPersonalPreferences)
     form_fields['language'].custom_widget = LanguageWidget
     form_fields['wysiwyg_editor'].custom_widget = WysiwygEditorWidget
+    form_fields['timezone'].custom_widget = TimezoneWidget
 
     def setUpWidgets(self, ignore_request=False):
         """ Hide the visible_ids field based on portal_properties.
